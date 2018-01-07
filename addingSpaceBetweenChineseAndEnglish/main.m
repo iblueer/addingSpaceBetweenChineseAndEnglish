@@ -13,10 +13,11 @@ int main(int argc, const char * argv[]) {
         // 提前设定好中文特殊符号，不加空格的
         // 这些特殊字符都不会添加空格。
         NSArray *chineseSymbols = @[@"，", @"。", @"？", @"！", @"：", @"；", @"、", @"（", @"）", @"【", @"】", @"「", @"」", @"", @"『", @"』", @"《", @"》", @"…", @"—"];
+        NSArray *syntaxSymbols = @[@"\n"];
         
         // 读取md文件到NSMutableString
         NSError *error;
-        NSMutableString *stringWithFile= [[NSString alloc] initWithContentsOfFile:@"/tmp/test.md"
+        NSMutableString *stringWithFile= [[NSMutableString alloc] initWithContentsOfFile:@"/tmp/test.md"
                                                            encoding:NSUTF8StringEncoding
                                                               error:&error];
         if (!stringWithFile) {
@@ -74,8 +75,13 @@ int main(int argc, const char * argv[]) {
                     thisCharacterIsEnglish = 1;
                 }
             }else if(strlen(thisCString)==1) {
-                NSLog(@"%lu 是字母", i);
-                thisCharacterIsEnglish = 0;
+                if ([syntaxSymbols containsObject:thisSubString]) {
+                    NSLog(@"%lu 是格式符号", i);
+                    thisCharacterIsEnglish = 2;
+                } else {
+                    NSLog(@"%lu 是字母", i);
+                    thisCharacterIsEnglish = 0;
+                }
             }
             
             // 判断next
@@ -89,8 +95,13 @@ int main(int argc, const char * argv[]) {
                     nextCharacterIsEnglish = 1;
                 }
             }else if(strlen(nextCString)==1) {
-                NSLog(@"%lu 是字母", i+1);
-                nextCharacterIsEnglish = 0;
+                if ([syntaxSymbols containsObject:thisSubString]) {
+                    NSLog(@"%lu 是格式符号", i);
+                    nextCharacterIsEnglish = 2;
+                } else {
+                    NSLog(@"%lu 是字母", i);
+                    nextCharacterIsEnglish = 0;
+                }
             }
             
             // 得到EAC
