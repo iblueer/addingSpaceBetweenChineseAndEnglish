@@ -7,26 +7,93 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <readline/readline.h>
+#import "MAEMOPathProcessor.h"
+#import "MAEMOExtentionFilter.h"
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
+        // 预设内容
+        /*-----------------------------------------------------------------------------------------------*/
+        
         // 提前设定好中文特殊符号，不加空格的
         // 这些特殊字符都不会添加空格。
         NSArray *chineseSymbols = @[@"，", @"。", @"？", @"！", @"：", @"；", @"、", @"（", @"）", @"【", @"】", @"「", @"」", @"", @"『", @"』", @"《", @"》", @"…", @"—"];
         NSArray *syntaxSymbols = @[@"\n"];
         
+        // 扩展名数组
+        NSArray *extendNames = @[@".md", @".txt", @".html"];
+        
+        
+        // 全局变量
+        /*-----------------------------------------------------------------------------------------------*/
+        // 声明新文件名的NSString
+        NSMutableString *saveToFileStr = [[NSMutableString alloc] init];
+        
+        
+        // 用户界面
+        /*-----------------------------------------------------------------------------------------------*/
+        // 用户输入文件所在目录，并将这个目录作为一个NSString
+        NSLog(@"\n\n<-----------EAC v3----------->\n\n本程序支持对md/txt/html文件进行加工\n\n请输入正确的文件路径：");
+        // 获取用户输入
+        char *route = readline(NULL);
+        NSString *readlineStr = [NSString stringWithCString:route encoding:NSASCIIStringEncoding];
+        NSMutableString *routeStr = [[NSMutableString alloc] initWithString:readlineStr];
+        
+        
+        // 目录处理
+        /*-----------------------------------------------------------------------------------------------*/
+        NSLog(@"🔺正在识别目录形式……");
+        MAEMOPathProcessor *pathpro = [[MAEMOPathProcessor alloc] init];
+        // 初始化目录判断机
+        [pathpro setAppPathDefaultly];
+        [pathpro getTargetPathString:routeStr];
+        BOOL correctPath = pathpro.success;
+        if (correctPath) {
+            routeStr = [NSMutableString stringWithString:pathpro.targetPath];
+        } else {
+            // 如果是个不合法的目录形式，则退出程序
+            return 0;
+        }
+        
+        // 匹配输入的字符串中的扩展名
+        /*-----------------------------------------------------------------------------------------------*/
+        NSLog(@"🔺正在匹配扩展名……");
+        MAEMOExtentionFilter *extfilt = [[MAEMOExtentionFilter alloc] init];
+        // 判断扩展名是否正确，如果不能匹配成功，全部返回FALSE
+        // 初始化扩展名判断机
+        [extfilt setExtendNamesDefaultly];
+        BOOL corExt = [extfilt correctExtension:routeStr];
+        if (corExt) {
+            // 匹配成功的话，就提取目标路径
+            saveToFileStr = extfilt.spacedFileStr;
+        } else {
+            // 匹配失败的话，就直接停止运行
+            return 0;
+        }
+        
+        
+        // 文件读取
+        /*-----------------------------------------------------------------------------------------------*/
         // 读取md文件到NSMutableString
         NSError *error;
-        NSMutableString *stringWithFile= [[NSMutableString alloc] initWithContentsOfFile:@"/tmp/test.md"
+        NSMutableString *stringWithFile= [[NSMutableString alloc] initWithContentsOfFile:routeStr
                                                            encoding:NSUTF8StringEncoding
                                                               error:&error];
         if (!stringWithFile) {
-            NSLog(@"Reading from file failed: %@", error);
+            // 输出读取错误报告
+            NSLog(@"❌读取文件失败：%@", error);
+            // 读取都失败了，直接结束程序。
+            return 0;
         } else {
-            NSLog(@"Reading from file succeeded.");
+            NSLog(@"⭕️读取文件成功");
         }
         
+        
+        // 加工准备中
+        /*-----------------------------------------------------------------------------------------------*/
         // 查找紧挨着汉字的英文字母
+        // 确定循环的次数
         NSUInteger ending = [stringWithFile length] - 1;
         
         // 这两个整形用来标记当前字符和下个字符的类型；
@@ -42,8 +109,12 @@ int main(int argc, const char * argv[]) {
         // 如果这个字符和下一个字符不同类型，那么EAC就是false，false就添加空格；
         // BOOL输出的时候是字符类型，%c。
         BOOL EAC = (thisCharacterIsEnglish + nextCharacterIsEnglish) == 1;
-        NSLog(@"defalt EAC: %c", EAC);
+        NSLog(@"🔺初始化EAC: %c", EAC);
         
+        
+        // 加工过程
+        /*-----------------------------------------------------------------------------------------------*/
+        NSLog(@"🔺正在加工……");
         // 建立一个do while循环。
         // 为什么不用for循环？因为循环的次数会随着程序运行不断增加。
         NSUInteger i = 0;
@@ -86,7 +157,8 @@ int main(int argc, const char * argv[]) {
             
             // 判断next
             if (strlen(nextCString)==3)
-            {                // 如果是中文的限定的符号，则应使它识别为英文（为了不添加空格）
+            {
+                // 如果是中文的限定的符号，则应使它识别为英文（为了不添加空格）
                 if ([chineseSymbols containsObject:nextSubString]) {
                     NSLog(@"%lu 是汉字特殊符号", i);
                     nextCharacterIsEnglish = 2;
@@ -109,7 +181,7 @@ int main(int argc, const char * argv[]) {
             BOOL EAC = (thisCharacterIsEnglish + nextCharacterIsEnglish) == 1;
             if (EAC) {
                 // 输出要插入空格的位置
-                NSLog(@"Found EAC, at range {location: %lu, length: %lu}", nextRange.location, nextRange.length);
+                NSLog(@"发现EAC，位置：%lu", nextRange.location);
                 
                 // 在这里生成两个子字符串
                 NSString *formerString  = [stringWithFile substringToIndex:nextRange.location];
@@ -138,20 +210,24 @@ int main(int argc, const char * argv[]) {
                 // 先测试一下第一次成功
                 //return 0;
             } else {
-                NSLog(@"No EAC");
+                NSLog(@"未发现EAC");
                 i++;
             }
         }while (i < ending);
         
-        // 最后输出当前的stringWithFile
-        NSLog(@"stringWithFile is [%@]", stringWithFile);
         
-        // 将文件导出到一个新的md文件中
-        BOOL success = [stringWithFile writeToFile:@"/tmp/test_spaced.md" atomically:YES encoding:NSUTF8StringEncoding error:&error];
+        // 加工完成
+        /*-----------------------------------------------------------------------------------------------*/
+        // 最后输出当前的stringWithFile
+//        NSLog(@"stringWithFile is [%@]", stringWithFile);
+
+        // 将文件导出到一个新的md文件中，和源文件在同一个目录下
+        BOOL success = [stringWithFile writeToFile:saveToFileStr atomically:YES encoding:NSUTF8StringEncoding error:&error];
         if (success) {
-            NSLog(@"已经写入到文件");
+            NSLog(@"⭕️成功导出到文件 %@", saveToFileStr);
         } else {
-            NSLog(@"写入到文件失败");
+            // 输出错误报告
+            NSLog(@"❌文件导出失败：%@", [error localizedDescription]);
         }
     }
     return 0;

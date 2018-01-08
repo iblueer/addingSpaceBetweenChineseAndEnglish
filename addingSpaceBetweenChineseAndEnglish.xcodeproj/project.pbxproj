@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F39266C200325CC00F46038 /* libreadline.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 2F39266B200325CC00F46038 /* libreadline.tbd */; };
+		2F39267520034B5600F46038 /* MAEMOPathProcessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F39267420034B5600F46038 /* MAEMOPathProcessor.m */; };
+		2F39268E2003655200F46038 /* MAEMOExtentionFilter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F39268D2003655200F46038 /* MAEMOExtentionFilter.m */; };
 		2F9502B22001F25F00BD719B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2F9502B12001F25F00BD719B /* main.m */; };
 /* End PBXBuildFile section */
 
@@ -23,6 +26,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		2F39266B200325CC00F46038 /* libreadline.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libreadline.tbd; path = usr/lib/libreadline.tbd; sourceTree = SDKROOT; };
+		2F39267320034B5600F46038 /* MAEMOPathProcessor.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MAEMOPathProcessor.h; sourceTree = "<group>"; };
+		2F39267420034B5600F46038 /* MAEMOPathProcessor.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MAEMOPathProcessor.m; sourceTree = "<group>"; };
+		2F39268C2003655200F46038 /* MAEMOExtentionFilter.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MAEMOExtentionFilter.h; sourceTree = "<group>"; };
+		2F39268D2003655200F46038 /* MAEMOExtentionFilter.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MAEMOExtentionFilter.m; sourceTree = "<group>"; };
 		2F9502AE2001F25F00BD719B /* addingSpaceBetweenChineseAndEnglish */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = addingSpaceBetweenChineseAndEnglish; sourceTree = BUILT_PRODUCTS_DIR; };
 		2F9502B12001F25F00BD719B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -32,17 +40,27 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F39266C200325CC00F46038 /* libreadline.tbd in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2F39266A200325CC00F46038 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				2F39266B200325CC00F46038 /* libreadline.tbd */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		2F9502A52001F25F00BD719B = {
 			isa = PBXGroup;
 			children = (
 				2F9502B02001F25F00BD719B /* addingSpaceBetweenChineseAndEnglish */,
 				2F9502AF2001F25F00BD719B /* Products */,
+				2F39266A200325CC00F46038 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,6 +76,10 @@
 			isa = PBXGroup;
 			children = (
 				2F9502B12001F25F00BD719B /* main.m */,
+				2F39268C2003655200F46038 /* MAEMOExtentionFilter.h */,
+				2F39268D2003655200F46038 /* MAEMOExtentionFilter.m */,
+				2F39267320034B5600F46038 /* MAEMOPathProcessor.h */,
+				2F39267420034B5600F46038 /* MAEMOPathProcessor.m */,
 			);
 			path = addingSpaceBetweenChineseAndEnglish;
 			sourceTree = "<group>";
@@ -119,7 +141,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2F39268E2003655200F46038 /* MAEMOExtentionFilter.m in Sources */,
 				2F9502B22001F25F00BD719B /* main.m in Sources */,
+				2F39267520034B5600F46038 /* MAEMOPathProcessor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
