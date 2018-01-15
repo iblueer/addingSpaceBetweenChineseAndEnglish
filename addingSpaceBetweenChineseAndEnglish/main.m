@@ -19,8 +19,11 @@ int main(int argc, const char * argv[]) {
         // 提前设定好中文特殊符号，不加空格的
         // 这些特殊字符都不会添加空格。
         // 现在把Markdown用到的基本符号也加入白名单了。
+        // 空格本身也不应该再添加更多空格了。
+        
+        //syntaxSymbols数组中的英文字符出现在中文后时，仍然会增加空格，
         NSArray *chineseSymbols = @[@"，", @"。", @"？", @"！", @"：", @"；", @"、", @"（", @"）", @"【", @"】", @"「", @"」", @"", @"『", @"』", @"《", @"》", @"…", @"—"];
-        NSArray *syntaxSymbols = @[@"\n", @"#", @"[", @"]", @"*", @"-", @"+", @"`", @"~"];
+        NSArray *syntaxSymbols = @[@"\n", @"\\", @"#", @"[", @"]", @"*", @"-", @"+", @"`", @"~", @" ", @"|"];
         
         
         // 全局变量
@@ -137,18 +140,18 @@ int main(int argc, const char * argv[]) {
             {
                 // 如果是中文的限定的符号，则应使它识别为英文（为了不添加空格）
                 if ([chineseSymbols containsObject:thisSubString]) {
-                    NSLog(@"%lu 是汉字特殊符号", i);
+                    NSLog(@"%lu %@ 是汉字特殊符号", i, thisSubString);
                     thisCharacterIsEnglish = 2;
                 } else {
-                    NSLog(@"%lu 是汉字", i);
+                    NSLog(@"%lu %@ 是汉字", i, thisSubString);
                     thisCharacterIsEnglish = 1;
                 }
             }else if(strlen(thisCString)==1) {
                 if ([syntaxSymbols containsObject:thisSubString]) {
-                    NSLog(@"%lu 是格式符号", i);
+                    NSLog(@"%lu %@ 是格式符号", i, thisSubString);
                     thisCharacterIsEnglish = 2;
                 } else {
-                    NSLog(@"%lu 是字母", i);
+                    NSLog(@"%lu %@ 是字母", i, thisSubString);
                     thisCharacterIsEnglish = 0;
                 }
             }
@@ -158,18 +161,18 @@ int main(int argc, const char * argv[]) {
             {
                 // 如果是中文的限定的符号，则应使它识别为英文（为了不添加空格）
                 if ([chineseSymbols containsObject:nextSubString]) {
-                    NSLog(@"%lu 是汉字特殊符号", i);
+                    NSLog(@"%lu %@ 是汉字特殊符号", i, nextSubString);
                     nextCharacterIsEnglish = 2;
                 } else {
-                    NSLog(@"%lu 是汉字", i);
+                    NSLog(@"%lu %@ 是汉字", i, nextSubString);
                     nextCharacterIsEnglish = 1;
                 }
             }else if(strlen(nextCString)==1) {
-                if ([syntaxSymbols containsObject:thisSubString]) {
-                    NSLog(@"%lu 是格式符号", i);
+                if ([syntaxSymbols containsObject:nextSubString]) {
+                    NSLog(@"%lu %@ 是格式符号", i, nextSubString);
                     nextCharacterIsEnglish = 2;
                 } else {
-                    NSLog(@"%lu 是字母", i);
+                    NSLog(@"%lu %@ 是字母", i, nextSubString);
                     nextCharacterIsEnglish = 0;
                 }
             }
