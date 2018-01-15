@@ -26,7 +26,7 @@
         NSLog(@"⭕️相对目录：预期文件在当前目录下");
         [self getThisPathString:inputString];
         self.success = TRUE;
-    } else if([[inputString substringToIndex:0] isEqualToString:@"/"]){
+    } else if([[inputString substringToIndex:1] isEqualToString:@"/"]){
         NSLog(@"⭕️绝对目录");
         self.targetPath = inputString;
         self.success = TRUE;
